@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Adele</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            perspective: 1000px; /* Добавляет глубину для 3D эффекта */
+        }
+
+        #ui {
+            position: relative;
+            width: 0;
+            height: 0;
+            transform-style: preserve-3d;
+            /* Плавное вращение всей фигуры для объема, как на видео */
+            animation: rotateHeart 16s linear infinite; 
+        }
+
+        .love_horizontal {
+            position: absolute;
+            transform-style: preserve-3d;
+            /* Используем переменные из JS для точного позиционирования каждой строки */
+            transform: translate3d(var(--x), var(--y), var(--z));
+        }
+
+        .love_word {
+            color: #ea80b0; /* Цвет один в один как на твоем скрине */
+            font-size: 1.3rem;
+            font-weight: bold;
+            white-space: nowrap;
+            letter-spacing: 2px;
+            /* Наклон букв на -30 градусов ровно по твоему скрину */
+            transform: translate(-50%, -50%) rotateZ(-30deg); 
+            text-shadow: 0 0 12px #ff69b4, 0 0 4px #fff;
+            user-select: none;
+            opacity: 0.85;
+            animation: pulseGlow 2s ease-in-out infinite alternate;
+        }
+
+        /* Анимации */
+        @keyframes rotateHeart {
+            0% { transform: rotateY(0deg) rotateX(10deg); }
+            100% { transform: rotateY(360deg) rotateX(10deg); }
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.6; text-shadow: 0 0 8px #ff69b4; }
+            100% { opacity: 1; text-shadow: 0 0 18px #ff69b4, 0 0 6px #fff; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui"></div>
+
+    <script>
+        const ui = document.getElementById('ui');
+        const totalLines = 60; // Количество строк (чем больше, тем плотнее сердце)
+        const text = "I love you Adele";
+
+        for (let i = 0; i < totalLines; i++) {
+            // Математический расчет формы сердца (формула кардиоиды)
+            const angle = (i / totalLines) * Math.PI * 2;
+            
+            // Базовые координаты сердца
+            const x = 16 * Math.pow(Math.sin(angle), 3);
+            const y = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
+            
+            // Множитель, чтобы увеличить размер сердца на экране
+            const scale = 15; 
+
+            // Создаем элементы
+            const container = document.createElement('div');
+            container.className = 'love_horizontal';
+            
+            // Передаем точные координаты в CSS
+            container.style.setProperty('--x', `${x * scale}px`);
+            container.style.setProperty('--y', `${y * scale}px`);
+            // Небольшое смещение по Z, чтобы при вращении был виден 3D объем
+            container.style.setProperty('--z', `${Math.sin(angle * 2) * 30}px`); 
+
+            const word = document.createElement('div');
+            word.className = 'love_word';
+            word.innerText = text;
+
+            container.appendChild(word);
+            ui.appendChild(container);
+        }
+    </script>
+</body>
+</html>
